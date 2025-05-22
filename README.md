@@ -52,3 +52,55 @@ This enables inspectors to quickly locate defects within videos based on the rob
 <pre>git clone https://github.com/Cvakapoor/yolov5
 pip install -r yolov5/requirements.txt
 cd yolov5</pre>
+
+### Mount Google Drive (for Google Colab users)
+
+<pre>from google.colab import drive
+drive.mount('/content/gdrive')
+!ln -s /content/gdrive/My\ Drive/ /mydrive</pre>
+
+---
+
+## Dataset Preparation
+
+- Format your dataset in YOLO format with images and labels.
+- Organize data into training and validation splits.
+- Create a dataset.yaml file specifying paths and classes.
+
+---
+
+## Training
+
+Train the model using:
+
+<pre>python train.py --img 384 --batch 4 --epochs 200 --data training/dataset.yaml --cfg training/yolov5s.yaml --weights '' --name yolov5s_detect --cache --device 0</pre>
+
+---
+
+## Inference and Logging
+
+Run detection on videos/images with timestamped anomaly logs:
+
+<pre>python detect_with_logs.py \
+  --weights runs/train/yolov5s_detect/weights/best.pt \
+  --source inference/video/block.mp4 \
+  --output inference/video_output \
+  --target_class Crack,Block,Biological-Object \
+  --csv_output inference/anomaly_log.csv</pre>
+  
+- Outputs a CSV log with timestamps and anomaly details.
+- Saves frames with detected anomalies for review.
+
+---
+
+## Output
+
+The CSV detection log format:
+
+| Timestamp  | Class            | Confidence |
+|------------|------------------|------------|
+| 00:00:05.123 | Crack            | 0.857      |
+| 00:00:07.456 | Biological-Object| 0.921      |
+| ...        | ...              | ...        |
+
+Detected frames are saved in the output directory alongside the video frames.
